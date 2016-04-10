@@ -10,7 +10,10 @@ public class Canvas extends JPanel implements Runnable {
 
 
     public Canvas() {
-//TODO: add MouseListener and MouseMotionListener
+        super();
+
+
+     //TODO: add MouseListener and MouseMotionListener
     }
 
 
