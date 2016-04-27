@@ -1,127 +1,111 @@
-package util;//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
+package util;
 
 public class BraceChecker {
-    public static final int OPENED_BUT_NOT_CLOSED = 0;
-    public static final int CLOSED_BUT_NOT_OPENED = 1;
-    public static final int OPENED_BUT_CLOSED_ANOTHER = 3;
-    private StackImpl<BracketItem> stack = new StackImpl();
-    private String message = "No Error";
-    private int errorIndex = -1;
+    public static final String MESSAGE_NO_ERROR  = "No Error";
 
-    public String getMessage() {
-        return this.message;
-    }
-
-    public int getErrorIndex() {
-        return this.errorIndex;
-    }
+    private Stack<BracketItem> stack;
+    private String resultMessage;
 
     private BraceChecker() {
+        stack = new StackImpl<BracketItem>();
     }
 
-    public boolean parse(String text) {
-        boolean isPassed = true;
+    public String getResultMessage() {
+        return resultMessage;
+    }
+
+    public boolean parse(String inputText) {
+        this.getResultMessage();
+        reset();
+        int length = inputText.length();
         int numberInLine = 0;
-        int lineNumber = 0;
-        BraceChecker.BracketItem stackLastElement = null;
-        char ch = 0;
+        int lineNumber = 1;
 
-
-
-        label53:
-        for(int i = 0; i < text.length(); ++i) {
-            ++this.errorIndex;
-            ch = text.charAt(i);
-            ++numberInLine;
-            switch(ch) {
+        BracketItem stackLastElement = null;
+        BracketItem currentItem = null;
+        char curr = 0;
+        int i = 0;
+        lab:
+        for (; i < length; i++) {
+            curr = inputText.charAt(i);
+            numberInLine++;
+            switch (curr) {
                 case '\n':
-                case '\r':
+                case'\r':
+                    lineNumber++;
                     numberInLine = 0;
-                    ++lineNumber;
                     break;
+                case '{':
                 case '(':
                 case '[':
-                case '{':
-                    BraceChecker.BracketItem item = new BraceChecker.BracketItem(ch, numberInLine, lineNumber, i);
-                    this.stack.push(item);
+                    stack.push(new BracketItem(curr, i, numberInLine, lineNumber));
                     break;
-                case ')':
-                    stackLastElement = (BraceChecker.BracketItem)this.stack.pop();
-                    if(stackLastElement == null || stackLastElement.getValue() != 40) {
-                        isPassed = false;
-                        break label53;
+                case '}':
+                    stackLastElement = stack.pop();
+                    if (stackLastElement == null || stackLastElement.getValue() != '{') {
+                        currentItem = new BracketItem(curr, i, numberInLine, lineNumber) ;
+                        break lab;
                     }
                     break;
                 case ']':
-                    stackLastElement = (BraceChecker.BracketItem)this.stack.pop();
-                    if(stackLastElement == null || stackLastElement.getValue() != 91) {
-                        isPassed = false;
-                        break label53;
+                    stackLastElement = stack.pop();
+                    if (stackLastElement == null || stackLastElement.getValue() != '[') {
+                        currentItem = new BracketItem(curr, i, numberInLine, lineNumber) ;
+                        break lab;
                     }
                     break;
-                case '}':
-                    stackLastElement = (BraceChecker.BracketItem)this.stack.pop();
-                    if(stackLastElement == null || stackLastElement.getValue() != 123) {
-                        isPassed = false;
-                        break label53;
+                case ')':
+                    stackLastElement = stack.pop();
+                    if (stackLastElement == null || stackLastElement.getValue() != '(') {
+                        currentItem = new BracketItem(curr, i, numberInLine, lineNumber) ;
+                        break lab;
                     }
+                    break;
             }
         }
 
-        if(!isPassed) {
-            if(stackLastElement == null) {
-                this.message = "closed \'" + ch + "\' but not opened ";
+        if (i < length) {
+            if (stackLastElement == null) {
+                resultMessage = "Error: Closed '" + currentItem + "' but not opened ";
             } else {
-                this.message = "opened \'" + stackLastElement.getValue() + "\' but closed \'" + ch + "\'";
+                resultMessage = "Error: Opened '" + stackLastElement + "' but closed '" + currentItem + "'";
             }
-        } else if((stackLastElement = (BraceChecker.BracketItem)this.stack.pop()) != null) {
-            this.message = "opened \'" + stackLastElement.getValue() + "\' but not closed";
-            isPassed = false;
+        } else if (!stack.isEmpty()) {
+            stackLastElement = stack.pop();
+            resultMessage = "Error: Opened '" + stackLastElement + "' but not closed ";
         }
 
-        return isPassed;
+        return resultMessage == MESSAGE_NO_ERROR;
     }
 
-    public static void main(String[] args) {
-        String s = "{[()] }";
-        BraceChecker b = new BraceChecker();
-        b.parse(s);
-        System.out.println(b.getMessage());
+    private void reset() {
+        stack.reset();
+        resultMessage = MESSAGE_NO_ERROR;
     }
 
     public static class BracketItem {
-        private char value;
+        private int index;
         private int numberInLine;
         private int lineNumber;
-        private int index;
+        private char value;
 
-        private  static final BraceChecker BRACE_CHECKER=new BraceChecker();
-
-        public static BraceChecker getBraceChecker(){
-            return BRACE_CHECKER;
-        }
-
-        public BracketItem(char value, int numberInLine, int lineNumber, int index) {
-            this.value = value;
+        public BracketItem(char value, int index, int numberInLine, int lineNumber) {
+            this.index = index;
             this.numberInLine = numberInLine;
             this.lineNumber = lineNumber;
+            this.value = value;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
             this.index = index;
         }
 
-        public char getValue() {
-            return this.value;
-        }
-
-        public void setValue(char value) {
-            this.value = value;
-        }
-
         public int getNumberInLine() {
-            return this.numberInLine;
+            return numberInLine;
         }
 
         public void setNumberInLine(int numberInLine) {
@@ -129,19 +113,36 @@ public class BraceChecker {
         }
 
         public int getLineNumber() {
-            return this.lineNumber;
+            return lineNumber;
         }
 
         public void setLineNumber(int lineNumber) {
             this.lineNumber = lineNumber;
         }
 
-        public int getIndex() {
-            return this.index;
+        public char getValue() {
+            return value;
         }
 
-        public void setIndex(int index) {
-            this.index = index;
+        public void setValue(char value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return " '" + value +
+            "', number in line=" + numberInLine +
+                    ", line number=" + lineNumber + ' ';
         }
     }
+
+    public static class SingleObjectCreater {
+
+        private static final BraceChecker braceChecker = new BraceChecker();
+
+        public static BraceChecker getBraceChecker() {
+            return braceChecker;
+        }
+    }
+
 }
