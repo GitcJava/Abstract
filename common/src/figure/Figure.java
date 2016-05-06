@@ -1,6 +1,8 @@
 package figure;
 
-import FigureUI.FigureCanvas;
+
+
+import figureui.FigureCanvas;
 
 import java.awt.*;
 
@@ -13,8 +15,7 @@ public abstract class Figure implements Runnable {
 	private Color color;
 
 
-	private FigureCanvas canvas;
-
+	private figureui.FigureCanvas canvas;
 	/**
 	 * Speed of this Figure by x coordinate
 	 */
