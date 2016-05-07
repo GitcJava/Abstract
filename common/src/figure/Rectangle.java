@@ -1,7 +1,7 @@
 package figure;
 
 
-import figureui.FigureCanvas;
+import figureui_1.FigureCanvas;
 
 import java.awt.*;
 

@@ -1,4 +1,4 @@
-package FigureUI;
+package figureui_1;
 
 import javax.swing.*;
 import java.awt.*;

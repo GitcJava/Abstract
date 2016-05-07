@@ -1,4 +1,4 @@
-package FigureUI;
+package figureui_1;
 
 import figure.Figure;
 import figure.Rectangle;
@@ -102,7 +102,7 @@ public class FigureCanvas extends JPanel {
 	public Figure getSelected() {
 		if (isSelected) {
 			int size = figures.size();
-			return size > 0 ? (Figure)figures.get(size - 1) : null;
+			return size > 0 ?figures.get(size - 1) : null;
 		}
 		return null;
 	}
@@ -134,7 +134,7 @@ public class FigureCanvas extends JPanel {
 		int size = figures.size();
 		isSelected = false;
 		for (int i = size - 1; i >= 0; i--) {
-			Figure f = (Figure)figures.get(i);
+			Figure f = figures.get(i);
 			if (f.isBelong(x, y)) {
 				figures.remove(f);
 				figures.add(f);
