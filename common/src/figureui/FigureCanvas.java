@@ -1,4 +1,4 @@
-package figureui_1;
+package figureui;
 
 import figure.Figure;
 import figure.Rectangle;
